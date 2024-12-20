@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Calculadora de Calorías</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            margin-top: 20px;
+            background: #28a745;
+            color: #fff;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .resultados {
+            margin-top: 30px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .resultados p {
+            margin: 10px 0;
+        }
+        .chiste {
+            font-style: italic;
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+ <div style="text-align:center;">
+        <img src="Logo.png" alt="Logo" width="300">
+        <p style="font-style:italic; color:#555;">Tu mejor herramienta para alcanzar tus metas</p>
+    </div>
+    <h1>Calculadora de Calorías y Macronutrientes</h1>
+    <form id="calcForm">
+        <label for="sexo">Sexo:</label>
+        <select id="sexo" required>
+            <option value="hombre">Hombre</option>
+            <option value="mujer">Mujer</option>
+        </select>
+
+        <label for="edad">Edad (años):</label>
+        <input type="number" id="edad" placeholder="Ej: 30" required>
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso" placeholder="Ej: 70" required>
+
+        <label for="estatura">Estatura (cm):</label>
+        <input type="number" id="estatura" placeholder="Ej: 170" required>
+
+        <label for="actividad">Nivel de actividad:</label>
+        <select id="actividad">
+            <option value="1.2">Sedentario</option>
+            <option value="1.375">Ligero</option>
+            <option value="1.55">Moderado</option>
+            <option value="1.725">Activo</option>
+            <option value="1.9">Muy activo</option>
+        </select>
+
+        <label for="objetivo">Objetivo:</label>
+        <select id="objetivo">
+            <option value="-300">Perder peso (déficit de 300 kcal)</option>
+            <option value="0">Mantener peso</option>
+            <option value="300">Ganar masa (superávit de 300 kcal)</option>
+        </select>
+
+        <button type="submit">Calcular</button>
+    </form>
+
+    <div class="resultados" id="resultados" style="display:none;">
+        <h2>Resultados</h2>
+        <p id="calorias"></p>
+        <p id="proteinas"></p>
+        <p id="carbohidratos"></p>
+        <p id="grasas"></p>
+    </div>
+    <div class="chiste">
+        <p>“Calculando macros desde que las pesas eran piedras.”</p>
+    </div>
+
+    <script>
+        document.getElementById("calcForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            // Recoge datos del formulario
+            const sexo = document.getElementById("sexo").value;
+            const edad = parseInt(document.getElementById("edad").value);
+            const peso = parseFloat(document.getElementById("peso").value);
+            const estatura = parseFloat(document.getElementById("estatura").value);
+            const actividad = parseFloat(document.getElementById("actividad").value);
+            const objetivo = parseFloat(document.getElementById("objetivo").value);
+
+            // Calcular BMR (Mifflin-St Jeor)
+            let bmr = 0;
+            if (sexo === "hombre") {
+                bmr = (10 * peso) + (6.25 * estatura) - (5 * edad) + 5;
+            } else {
+                bmr = (10 * peso) + (6.25 * estatura) - (5 * edad) - 161;
+            }
+
+            // Calorías de mantenimiento (TDEE)
+            const tdee = bmr * actividad;
+
+            // Ajuste según objetivo
+            const caloriasObjetivo = tdee + objetivo;
+
+            // Porcentaje de macros (ejemplo: 32% prote, 38% carb, 30% grasa)
+            const pctProteina = 0.32;
+            const pctCarbs = 0.38;
+            const pctGrasas = 0.30;
+
+            // Calorías asignadas a cada macro
+            const caloriasProteinas = caloriasObjetivo * pctProteina;
+            const caloriasCarbs = caloriasObjetivo * pctCarbs;
+            const caloriasGrasas = caloriasObjetivo * pctGrasas;
+
+            // Convertir calorías en gramos
+            // prote y carbs: 4 kcal/g, grasas: 9 kcal/g
+            const gramosProteina = caloriasProteinas / 4;
+            const gramosCarbs = caloriasCarbs / 4;
+            const gramosGrasas = caloriasGrasas / 9;
+
+            // Mostrar resultados
+            document.getElementById("calorias").textContent = `Calorías diarias: ${Math.round(caloriasObjetivo)} kcal`;
+            document.getElementById("proteinas").textContent = `Proteínas: ${Math.round(gramosProteina)} g`;
+            document.getElementById("carbohidratos").textContent = `Carbohidratos: ${Math.round(gramosCarbs)} g`;
+            document.getElementById("grasas").textContent = `Grasas: ${Math.round(gramosGrasas)} g`;
+
+            document.getElementById("resultados").style.display = "block";
+        });
+    </script>
+</body>
+</html>
